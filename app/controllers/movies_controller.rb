@@ -38,12 +38,17 @@ class MoviesController < ApplicationController
     redirect_to movies_path
   end
 
-
-  Rails.application.routes.draw do
-    resources :movies do
-      get 'movies/:id/same_director', to: 'movies#search_directors', as: 'search_directors'
+  def find_with_same_director
+    @movie = Movie.find(params[:id])
+    if @movie.director.blank?
+      flash[:notice] = "'#{@movie.title}' has no director info"
+      redirect_to movies_path
+    else
+      @movies = Movie.where(director: @movie.director)
     end
   end
+
+
 
   private
   # Making "internal" methods private is not required, but is a common practice.
